@@ -1,82 +1,66 @@
+import { test, expect } from "../tests/fixture.js";
+import fs from "fs";
 
-// import login_Proj from "../POM/login_Proj.page.js"
-// import home_Proj from "../POM/home_Proj.page.js"
-// import fs from "fs"
-import {test,expect} from "@playwright/test"
-let data_file = fs.readFileSync("C:/Users/SUSMITA/OneDrive/Desktop/PWProject/testdata/logininfo.json")
-let data = JSON.parse(data_file)
+import login_Proj from "../POM/login_Proj.page.js";
+import home_Proj from "../POM/home_Proj.page.js";
 
-//1. Verify Login
-test("verify login", async({page})=>{
-    let url = data.url
-    let un = data.email
-    let ps = data.password
-    let lp = new login_Proj(page)
-    let hp = new home_Proj(page)
-    await page.goto(url)
-    await page.waitForTimeout(4000)
-    await lp.login(un, ps)
-    await page.waitForTimeout(4000)
-    await console.log("Logged In Successfully")
+// Reading test data
+let data_file = fs.readFileSync(
+    "C:/Users/SUSMITA/OneDrive/Desktop/PWProject/testdata/logininfo.json",
+    "utf8"
+);
+let data = JSON.parse(data_file);
 
-})
 
-//2. Verify navigation to the main dashboard
-// test("verify navigating to dashoard", async({page, loggedIn})=>{
-//     let url = data.url
-//     let un = data.email
-//     let ps = data.password
-//     let lp = new login_Proj(page)
-//     await page.goto(url)
-//     await page.waitForTimeout(4000)
-//     await lp.login(un, ps)
-//     await page.waitForTimeout(4000)
-//     await console.log("Logged In Successfully")
-// //verifying the profile page is coming before home page
-//     await expect(page.getByText('No designation added')).toBeVisible();
-//     await page.waitForTimeout(3000)
+// 1. Verify Login
+test("Verify Login", async ({ page }) => {
 
-// //assert "Jobs For You" appeared in the page
-//     await page.click("//button[text()='Jobs']")
-//     await expect(page.getByText('Jobs For You')).toBeVisible();
-//     await page.waitForTimeout(3000)
-//     await console.log("Navigated to dashoard");
+    let url = data.url;
+    let un = data.email;
+    let ps = data.password;
 
-// })
+    let lp = new login_Proj(page);
+    await page.goto(url);
+    await lp.login(un, ps);
 
-test.only("verify navigating to dashboard", async ({ page, loggedIn }) => {
+    // Verify successful login
+    await expect(page.getByText("No designation added")).toBeVisible();
+    console.log("Logged In Successfully");
 
-    // Login is already handled by the fixture.
-
-    // Verify profile page appears
-    await expect(page.getByText('No designation added')).toBeVisible();
-
-    // Click Jobs
-    await page.locator("//button[text()='Jobs']").click();
-
-    // Verify Jobs For You
-    await expect(page.getByText('Jobs For You')).toBeVisible();
-
-    console.log("Navigated to dashboard successfully");
 });
 
 
-//3.------verify logout------------
-test.only("verify logout", async({page})=>{
-    let url = data.url
-    let un = data.email
-    let ps = data.password
-    let lp = new login_Proj(page)
-    await page.goto(url)
-    await page.waitForTimeout(4000)
-    await lp.login(un, ps)
-    await page.waitForTimeout(4000)
-    await console.log("Logged In Successfully")
+// 2. Verify Navigation to Dashboard
+test("Verify Navigation to Dashboard", async ({ page, loggedIn }) => {
+    // Verify profile page
+    await expect(page.getByText("No designation added")).toBeVisible();
+    // Click Jobs
+    await page.locator("//button[text()='Jobs']").click();
+    // Verify Jobs For You
+    await expect(page.getByText("Jobs For You")).toBeVisible();
+    console.log("Navigated to Dashboard Successfully");
 
-//----logging out ---------------
-    let hp =  new home_Proj(page)
-    await hp.profileMenu.click()
-    await page.waitForTimeout(2000)
-    await hp.logout()
-    await console.log("Logge OUT successfully")
-})
+});
+
+
+// 3. Verify Logout
+test("Verify Logout", async ({ page }) => {
+
+    let url = data.url;
+    let un = data.email;
+    let ps = data.password;
+
+    let lp = new login_Proj(page);
+    let hp = new home_Proj(page);
+    await page.goto(url);
+    // Login
+    await lp.login(un, ps);
+    await expect(page.getByText("No designation added")).toBeVisible();
+    console.log("Logged In Successfully");
+    // Logout
+    await hp.logout();
+    // Verify logout
+    await hp.logout();
+    await expect(page.getByText("Login")).toBeVisible();
+    console.log("Logged Out Successfully");
+});
