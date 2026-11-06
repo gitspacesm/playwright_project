@@ -21,9 +21,7 @@ test("Verify Login", async ({ page }) => {
 
     let lp = new login_Proj(page);
     await page.goto(url);
-    await page.waitForTimeout(50000)
-    await lp.login(un, ps);
-     await page.waitForTimeout(50000)
+    await lp.login(un, ps)
 
     // Verify successful login
     await expect(page.getByText("No designation added")).toBeVisible();

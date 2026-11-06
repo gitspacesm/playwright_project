@@ -8,8 +8,9 @@ class login_Proj{
 
     async login(un, ps){
        await this.usernameTF.fill(un)
-        await this.passwordTF.fill(ps)
-        await this.loginBTN.click()
+       await page.waitForTimeout(50000)
+       await this.passwordTF.fill(ps)
+       await this.loginBTN.click()
     }
 }
 export default login_Proj
